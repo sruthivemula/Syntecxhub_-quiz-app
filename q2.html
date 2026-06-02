@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Quiz App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(-45deg,#667eea,#764ba2,#6a11cb,#2575fc);
+    background-size:400% 400%;
+    animation:gradient 10s ease infinite;
+}
+
+@keyframes gradient{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.container{
+    width:90%;
+    max-width:500px;
+    background:rgba(255,255,255,0.95);
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+h1,h2{
+    margin-bottom:20px;
+    color:#333;
+}
+
+.option{
+    display:block;
+    text-align:left;
+    margin:12px 0;
+    padding:10px;
+    border-radius:8px;
+    background:#f4f4f4;
+    cursor:pointer;
+}
+
+.option:hover{
+    background:#e8e8e8;
+}
+
+button{
+    margin-top:20px;
+    padding:12px 25px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.hidden{
+    display:none;
+}
+
+.progress{
+    width:100%;
+    height:8px;
+    background:#ddd;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#4f46e5;
+    border-radius:20px;
+    transition:.3s;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Home -->
+<div id="home">
+    <h1>🎯 Quiz App</h1>
+    <p>Test your Web Development Knowledge</p>
+    <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<!-- Quiz -->
+<div id="quiz" class="hidden">
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <h2 id="question"></h2>
+
+    <div id="options"></div>
+
+    <button id="nextBtn" onclick="nextQuestion()">
+        Next
+    </button>
+</div>
+
+<!-- Result -->
+<div id="result" class="hidden">
+    <h1>🎉 Quiz Completed</h1>
+    <h2 id="score"></h2>
+    <button onclick="location.reload()">
+        Restart Quiz
+    </button>
+</div>
+
+</div>
+
+<script>
+
+const quiz = [
+{
+question:"What does HTML stand for?",
+options:[
+"Hyper Text Markup Language",
+"Home Tool Markup Language",
+"Hyperlinks Text Markup Language",
+"None"
+],
+answer:0
+},
+{
+question:"Which language styles websites?",
+options:["Java","Python","CSS","C++"],
+answer:2
+},
+{
+question:"Which language adds interactivity?",
+options:["HTML","CSS","JavaScript","SQL"],
+answer:2
+},
+{
+question:"GitHub is mainly used for?",
+options:[
+"Gaming",
+"Video Editing",
+"Version Control",
+"Design"
+],
+answer:2
+},
+{
+question:"Which tag creates a hyperlink?",
+options:["<a>","<img>","<div>","<h1>"],
+answer:0
+}
+];
+
+let current=0;
+let score=0;
+
+function startQuiz(){
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("quiz").classList.remove("hidden");
+    loadQuestion();
+}
+
+function loadQuestion(){
+
+    const q=quiz[current];
+
+    document.getElementById("question").innerText=
+    `${current+1}. ${q.question}`;
+
+    document.getElementById("options").innerHTML=
+    q.options.map((option,index)=>`
+        <label class="option">
+            <input type="radio"
+                   name="answer"
+                   value="${index}">
+            ${option}
+        </label>
+    `).join("");
+
+    document.getElementById("progressBar").style.width=
+    ((current)/quiz.length)*100+"%";
+
+    document.getElementById("nextBtn").innerText=
+    current===quiz.length-1 ? "Submit" : "Next";
+}
+
+function nextQuestion(){
+
+    const selected=
+    document.querySelector(
+    'input[name="answer"]:checked'
+    );
+
+    if(!selected){
+        alert("Please select an answer");
+        return;
+    }
+
+    if(Number(selected.value)===quiz[current].answer){
+        score++;
+    }
+
+    current++;
+
+    if(current<quiz.length){
+        loadQuestion();
+    }
+    else{
+        document.getElementById("quiz")
+        .classList.add("hidden");
+
+        document.getElementById("result")
+        .classList.remove("hidden");
+
+        document.getElementById("score")
+        .innerText=`Your Score: ${score}/${quiz.length}`;
+    }
+}
+
+</script>
+
+</body>
+</html>
